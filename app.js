@@ -13,7 +13,7 @@ let sistema = {
       bloque.fecha +
       JSON.stringify(bloque.datos) +
       bloque.previousHash +
-      bloque.nons
+      bloque.nonce
     ).toString()
   },
   crearBloque: function (data, previous) {
@@ -30,6 +30,7 @@ let sistema = {
   agregarBloque: function (datos) {
     console.log("agregando bloque")
     let previo = this.blockChain[this.blockChain.length - 1];
+    //console.log(previo);
     let block = this.crearBloque(datos, previo.hash);
     //minado
     block=this.minarBloque(block);
@@ -38,10 +39,11 @@ let sistema = {
 
   minarBloque: function (bloque) {
     while (!bloque.hash.startsWith(this.dificultad)) {
-      console.log("no");
-      bloque.nons++;
+     // console.log(bloque.hash);
+      bloque.nonce++;
       bloque.hash = this.crearHash(bloque);
     }
+    return bloque;
   },
 
   validarCadena: function () {
@@ -57,19 +59,28 @@ let sistema = {
         console.log("el hash no es correcto");
         return false;
       }
+      console.log("cadena valida");
       return true;
     }
   }
 };
 
 sistema.crearGenesis();
-sistema.agregarBloque({ 'voto': 'a' });
-sistema.agregarBloque({ 'voto': 'b' });
-console.log(sistema.validarCadena());
+sistema.agregarBloque({ voto: 'a' });
+sistema.agregarBloque({ voto: 'b' });
+sistema.agregarBloque({ voto: "b" });
+sistema.agregarBloque({ voto: "a" });
+sistema.agregarBloque({ voto: "a" });
+sistema.agregarBloque({ voto: "b" });
+sistema.agregarBloque({ voto: "a" });
+sistema.agregarBloque({ voto: "b" });
+
+
+sistema.validarCadena();
 
 //ataque
 sistema.blockChain[1].datos.voto = "w";
-console.log(sistema.validarCadena());
+sistema.validarCadena();
 
 
-console.log(JSON.stringify(sistema.blockChain), null, 2);
+//console.log(sistema.blockChain);
